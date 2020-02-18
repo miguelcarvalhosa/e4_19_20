@@ -14,8 +14,8 @@
  * Recebe como parâmetros de entrada:
  *		- baudrate: valores padrão entre 2400 e 921600 (default 9600)
  *		- databits: 8 ou 9 (default 8)
- *		- parity: 0 (sem), 1 (impar) ou 2 (par) (default sem)
- *		- stopbits: 1 ou 2 (default 1)
+ *		- parity: 0 (sem), 1 (impar) ou 2 (par) (default ímpar)
+ *		- stopbits: 1 ou 2 (default 2)
  */
 void uart1_config(unsigned int baudrate, unsigned char databits, unsigned char parity, unsigned char stopbits) {
 	U1MODEbits.BRGH = 1;		// Divide o clock por 4
@@ -30,10 +30,10 @@ void uart1_config(unsigned int baudrate, unsigned char databits, unsigned char p
 		else if(parity == 2) U1MODEbits.PDSEL = 0x01;		// 8 bit data, even parity
 	}
 	else if(databits == 9) U1MODEbits.PDSEL = 0x11;			// 9 bit data, no parity
-	else U1MODEbits.PDSEL = 0x00;			// default 8 bit data, no parity
+	else U1MODEbits.PDSEL = 0x10;			// default 8 bit data, odd parity
 	
 	if(stopbits == 1 || stopbits == 2) U1MODEbits.STSEL = stopbits - 1;
-	else U1MODEbits.STSEL = 0;			// default 1 stop bit
+	else U1MODEbits.STSEL = 1;			// default 2 stop bit
 	
 	U1STAbits.UTXEN = 1;		// Ativar o módulo de transmissão
 	U1STAbits.URXEN = 1;		// Ativar o módulo de receção

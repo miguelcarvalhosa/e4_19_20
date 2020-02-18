@@ -19,6 +19,7 @@
 void timer2_config(unsigned short freq);
 void adc_config(void);
 void adc_start(void);
+unsigned int adc_read(void);
 
 
 /*
@@ -27,16 +28,27 @@ void adc_start(void);
 int main(int argc, char** argv) {
 	
 	TRISAbits.TRISA3 = 0;
-	timer2_config(100);
-	uart1_config(115200, 8, 1, 2);
+	timer2_config(500);
+	uart1_config(9600, 8, 1, 2);
 	adc_config();
+	
+	uart1_puts("Init\n");
 			
 	while(1) {
 		if(IFS0bits.T2IF == 1) {
 			LATAbits.LATA3 = !LATAbits.LATA3;
 			adc_start();
-			while(IFS1bits.AD1IF == 0);
-			int val = (AD1BUF0+AD1BUF1)/2;
+			unsigned int val = adc_read();
+			
+			// Cálculos para mostrar o valor no terminal
+			val = val*33/1023;
+			char val1 = val/10;
+			char val0 = val%10;
+			uart1_putc(0x30 + val1);
+			uart1_putc('.');
+			uart1_putc(0x30 + val0);
+			uart1_putc('\n');
+			
 			IFS0bits.T2IF = 0;
 		}
 	}
@@ -81,4 +93,15 @@ void adc_config(void) {
  */
 void adc_start(void) {
 	AD1CON1bits.ASAM = 1;
+}
+
+
+/*
+ * Função para ler a ADC
+ * Devolve o valor lido
+ */
+unsigned int adc_read(void) {
+	while(IFS1bits.AD1IF == 0);
+	int val = (ADC1BUF0+ADC1BUF1)/2;
+	return val;
 }
