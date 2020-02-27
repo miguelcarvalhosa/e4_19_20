@@ -17,6 +17,7 @@
  * Protótipos das funções
  */
 void timer2_config(unsigned short freq);
+void timer3_config(void);
 void adc_config(void);
 void adc_start(void);
 unsigned int adc_read(void);
@@ -70,6 +71,31 @@ void timer2_config(unsigned short freq) {
 		T2CONbits.TON = 1;			// Timer 2 ON
 	}
 	else return;
+}
+
+
+/*
+ * Função para configurar o timer 3
+ * Contar a uma frequencia de 2kHz
+ */
+void timer3_config(void){
+    T2CONbits.TCKPS = 0;            // K_presc = 1
+    PR3 = (PBCLK/2000) - 1;         // Constante de contagem
+    TMR3 = 0;                       // Reset ao registo de contagem
+    T3CONbits.TON = 1;              // Timer 3 ON
+}
+
+
+/*
+ * Função para gerar um sinal PWM
+ * Recebe como argumento o duty-cycle que queremos gerar
+ * OC3 -> RD2 pin (6)
+ */
+void pwm(unsigned char duty_cycle){
+    OC3CONbits.OCM = 6;
+    OC3CONbits.OCTSEL = 1;
+    OC3RS = (PBCLK*duty_cycle)/2000;
+    OC3CONbits.ON = 1;
 }
 
 
