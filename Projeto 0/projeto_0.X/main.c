@@ -18,6 +18,7 @@
  */
 void timer2_config(unsigned short freq);
 void timer3_config(void);
+void pwm(unsigned char duty_cycle);
 void adc_config(void);
 void adc_start(void);
 unsigned int adc_read(void);
@@ -29,11 +30,16 @@ unsigned int adc_read(void);
 int main(int argc, char** argv) {
 	
 	TRISAbits.TRISA3 = 0;
+	TRISCbits.TRISC1 = 0;
+	TRISDbits.TRISD2 = 0;
 	timer2_config(500);
+	timer3_config();
 	uart1_config(9600, 8, 1, 2);
 	adc_config();
 	
 	uart1_puts("Init\n");
+	
+	pwm(20);
 			
 	while(1) {
 		if(IFS0bits.T2IF == 1) {
@@ -50,7 +56,12 @@ int main(int argc, char** argv) {
 			uart1_putc(0x30 + val0);
 			uart1_putc('\n');
 			
+			
 			IFS0bits.T2IF = 0;
+		}
+		if(IFS0bits.T3IF == 1) {
+			LATCbits.LATC1 = !LATCbits.LATC1;
+			IFS0bits.T3IF = 0;
 		}
 	}
 	
@@ -94,7 +105,7 @@ void timer3_config(void){
 void pwm(unsigned char duty_cycle){
     OC3CONbits.OCM = 6;
     OC3CONbits.OCTSEL = 1;
-    OC3RS = (PBCLK*duty_cycle)/2000;
+    OC3RS = (PBCLK*duty_cycle)/(2000*100);
     OC3CONbits.ON = 1;
 }
 
@@ -124,7 +135,7 @@ void adc_start(void) {
 
 /*
  * Função para ler a ADC
- * Devolve o valor lido
+ * Devolve o valor lido (média de duas leituras)
  */
 unsigned int adc_read(void) {
 	while(IFS1bits.AD1IF == 0);
