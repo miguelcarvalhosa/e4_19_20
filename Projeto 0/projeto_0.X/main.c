@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <xc.h>
+#include <stdint.h>
 
 #include "config_bits.h"
 #include "uart.h"
@@ -18,9 +19,11 @@
  */
 void timer2_config(unsigned short freq);
 void timer3_config(void);
+void pwm(unsigned char duty_cycle);
 void adc_config(void);
 void adc_start(void);
 unsigned int adc_read(void);
+void transfer_func(unsigned int val);
 
 
 /*
@@ -30,10 +33,13 @@ int main(int argc, char** argv) {
 	
 	TRISAbits.TRISA3 = 0;
 	timer2_config(500);
+    timer3_config();
 	uart1_config(9600, 8, 1, 2);
 	adc_config();
 	
 	uart1_puts("Init\n");
+    
+    pwm(50);
 			
 	while(1) {
 		if(IFS0bits.T2IF == 1) {
@@ -42,19 +48,19 @@ int main(int argc, char** argv) {
 			unsigned int val = adc_read();
 			
 			// Cálculos para mostrar o valor no terminal
-			val = val*33/1023;
-			char val1 = val/10;
-			char val0 = val%10;
+			unsigned int val33 = val*33/1023;
+			uint8_t val1 = val33/10;
+			uint8_t val0 = val33%10;
 			uart1_putc(0x30 + val1);
 			uart1_putc('.');
 			uart1_putc(0x30 + val0);
 			uart1_putc('\n');
-			
+            
+			transfer_func(val);
 			IFS0bits.T2IF = 0;
 		}
 	}
-	
-	
+    
 	return (EXIT_SUCCESS);
 }
 
@@ -94,7 +100,9 @@ void timer3_config(void){
 void pwm(unsigned char duty_cycle){
     OC3CONbits.OCM = 6;
     OC3CONbits.OCTSEL = 1;
-    OC3RS = (PBCLK*duty_cycle)/2000;
+    OC3RS = (PBCLK*duty_cycle)/(2000*100);
+    /*OC3RS = (PR3+1)*duty_cycle/(100*20);
+    OC3RS = OC3RS * 20;                       // STEP mais proximo relativo ao duty-cycle -> 1000 steps*/
     OC3CONbits.ON = 1;
 }
 
@@ -130,4 +138,13 @@ unsigned int adc_read(void) {
 	while(IFS1bits.AD1IF == 0);
 	int val = (ADC1BUF0+ADC1BUF1)/2;
 	return val;
+}
+
+
+/*
+ * Função de transferência
+ */
+void transfer_func(unsigned int val){
+    val = val*100/1023;
+    OC3RS = (PBCLK*val)/(2000*100);
 }
