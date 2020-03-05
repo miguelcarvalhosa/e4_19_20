@@ -32,6 +32,8 @@ void transfer_func(unsigned int val);
 int main(int argc, char** argv) {
 	
 	TRISAbits.TRISA3 = 0;
+	TRISCbits.TRISC1 = 0;
+	TRISDbits.TRISD2 = 0;
 	timer2_config(500);
     timer3_config();
 	uart1_config(9600, 8, 1, 2);
@@ -57,7 +59,12 @@ int main(int argc, char** argv) {
 			uart1_putc('\n');
             
 			transfer_func(val);
+
 			IFS0bits.T2IF = 0;
+		}
+		if(IFS0bits.T3IF == 1) {
+			LATCbits.LATC1 = !LATCbits.LATC1;
+			IFS0bits.T3IF = 0;
 		}
 	}
     
@@ -132,7 +139,7 @@ void adc_start(void) {
 
 /*
  * Função para ler a ADC
- * Devolve o valor lido
+ * Devolve o valor lido (média de duas leituras)
  */
 unsigned int adc_read(void) {
 	while(IFS1bits.AD1IF == 0);
