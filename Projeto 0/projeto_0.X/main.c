@@ -19,7 +19,8 @@
  */
 void timer2_config(unsigned short freq);
 void timer3_config(void);
-void pwm(unsigned char duty_cycle);
+void pwm_config(void);
+void pwm(unsigned int duty_cycle);
 void adc_config(void);
 void adc_start(void);
 unsigned int adc_read(void);
@@ -41,8 +42,8 @@ int main(int argc, char** argv) {
 	
 	uart1_puts("Init\n");
     
-    pwm(50);
-			
+	pwm_config();
+	
 	while(1) {
 		if(IFS0bits.T2IF == 1) {
 			LATAbits.LATA3 = !LATAbits.LATA3;
@@ -91,7 +92,7 @@ void timer2_config(unsigned short freq) {
  * Função para configurar o timer 3
  * Contar a uma frequencia de 2kHz
  */
-void timer3_config(void){
+void timer3_config( nvoid){
     T2CONbits.TCKPS = 0;            // K_presc = 1
     PR3 = (PBCLK/2000) - 1;         // Constante de contagem
     TMR3 = 0;                       // Reset ao registo de contagem
@@ -104,13 +105,20 @@ void timer3_config(void){
  * Recebe como argumento o duty-cycle que queremos gerar
  * OC3 -> RD2 pin (6)
  */
-void pwm(unsigned char duty_cycle){
+void pwm_config(void){
     OC3CONbits.OCM = 6;
     OC3CONbits.OCTSEL = 1;
-    OC3RS = (PBCLK*duty_cycle)/(2000*100);
-    /*OC3RS = (PR3+1)*duty_cycle/(100*20);
-    OC3RS = OC3RS * 20;                       // STEP mais proximo relativo ao duty-cycle -> 1000 steps*/
     OC3CONbits.ON = 1;
+}
+
+
+/*
+ * Função para gerar um sinal PWM
+ * Recebe como argumento o duty-cycle que queremos gerar
+ * OC3 -> RD2 pin (6)
+ */
+void pwm(unsigned int duty_cycle){
+    OC3RS = (PBCLK*duty_cycle)/(2000*100);
 }
 
 
@@ -153,5 +161,5 @@ unsigned int adc_read(void) {
  */
 void transfer_func(unsigned int val){
     val = val*100/1023;
-    OC3RS = (PBCLK*val)/(2000*100);
+    pwm(val);
 }
