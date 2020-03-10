@@ -141,6 +141,7 @@ void adc_config(void) {
  * Função para iniciar a conversão da ADC
  */
 void adc_start(void) {
+    IFS1bits.AD1IF = 0;
 	AD1CON1bits.ASAM = 1;
 }
 
