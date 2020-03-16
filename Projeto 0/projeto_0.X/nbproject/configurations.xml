@@ -6,6 +6,10 @@
                    projectFiles="true">
       <itemPath>config_bits.h</itemPath>
       <itemPath>uart.h</itemPath>
+      <itemPath>delay.h</itemPath>
+      <itemPath>timer2.h</itemPath>
+      <itemPath>timer3.h</itemPath>
+      <itemPath>adc.h</itemPath>
     </logicalFolder>
     <logicalFolder name="LinkerScript"
                    displayName="Linker Files"
@@ -16,6 +20,10 @@
                    projectFiles="true">
       <itemPath>main.c</itemPath>
       <itemPath>uart.c</itemPath>
+      <itemPath>delay.c</itemPath>
+      <itemPath>timer2.c</itemPath>
+      <itemPath>timer3.c</itemPath>
+      <itemPath>adc.c</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
@@ -36,7 +44,7 @@
         <targetPluginBoard></targetPluginBoard>
         <platformTool>PK3OBPlatformTool</platformTool>
         <languageToolchain>XC32</languageToolchain>
-        <languageToolchainVersion>2.30</languageToolchainVersion>
+        <languageToolchainVersion>2.10</languageToolchainVersion>
         <platform>3</platform>
       </toolsSet>
       <packs>
@@ -115,6 +123,9 @@
         <property key="preprocessor-macros" value=""/>
         <property key="warning-level" value=""/>
       </C32-AS>
+      <C32-CO>
+        <property key="coverage-enable" value=""/>
+      </C32-CO>
       <C32-LD>
         <property key="additional-options-use-response-files" value="false"/>
         <property key="additional-options-write-sla" value="false"/>

@@ -5,25 +5,23 @@
 
 #include "config_bits.h"
 #include "uart.h"
+#include "delay.h"
+#include "timer2.h"
+#include "timer3.h"
+#include "adc.h"
 
 
 /*
  * Definições
  */
-#define SYSCLK 80000000
-#define PBCLK  40000000
+#define SYSCLK			80000000
+#define PBCLK			SYSCLK/2
+#define ADC_SAMPLES		2
 
 
 /*
  * Protótipos das funções
  */
-void timer2_config(unsigned short freq);
-void timer3_config(void);
-void pwm_config(void);
-void pwm(unsigned int duty_cycle);
-void adc_config(void);
-void adc_start(void);
-unsigned int adc_read(void);
 void transfer_func(unsigned int val);
 
 
@@ -32,26 +30,33 @@ void transfer_func(unsigned int val);
  */
 int main(int argc, char** argv) {
 	
+	
 	TRISAbits.TRISA3 = 0;
-	TRISCbits.TRISC1 = 0;
+	TRISCbits.TRISC2 = 0;
 	TRISDbits.TRISD2 = 0;
 	timer2_config(500);
-    timer3_config();
+	timer3_config_pwm(2000, 0, 3);
 	uart1_config(9600, 8, 1, 2);
-	adc_config();
+	adc_config(0, ADC_SAMPLES);
 	
 	uart1_puts("Init\n");
     
-	pwm_config();
+	// Teste do PWM
+	int i=0;
+	for(i; i<255; i++) {
+		timer3_set_pwm(i, 3);
+		delay_ms(10);
+	}
 	
 	while(1) {
 		if(IFS0bits.T2IF == 1) {
-			LATAbits.LATA3 = !LATAbits.LATA3;
+			//LATAbits.LATA3 = !LATAbits.LATA3;		// Pin 13
+			PORTAINV = 0x08;
 			adc_start();
-			unsigned int val = adc_read();
+			uint32_t val = adc_read(ADC_SAMPLES);
 			
 			// Cálculos para mostrar o valor no terminal
-			unsigned int val33 = val*33/1023;
+			uint32_t val33 = val*33/1023;
 			uint8_t val1 = val33/10;
 			uint8_t val0 = val33%10;
 			uart1_putc(0x30 + val1);
@@ -59,108 +64,28 @@ int main(int argc, char** argv) {
 			uart1_putc(0x30 + val0);
 			uart1_putc('\n');
             
-			transfer_func(val);
+			transfer_func(val); 
 
 			IFS0bits.T2IF = 0;
 		}
 		if(IFS0bits.T3IF == 1) {
-			LATCbits.LATC1 = !LATCbits.LATC1;
+			LATCbits.LATC2 = !LATCbits.LATC2;		// Pin 22
 			IFS0bits.T3IF = 0;
 		}
 	}
-    
+	
+	
+	
+	
 	return (EXIT_SUCCESS);
 }
 
-
-/*
- * Função para configurar o timer 2
- * Recebe como parâmetro de entrada a frequência desejada, entre 100Hz e 500Hz
- */
-void timer2_config(unsigned short freq) {
-	if(freq >= 100 && freq <= 500) {
-		T2CONbits.TCKPS = 3;		// K_presc = 8
-		PR2 = (PBCLK/8)/freq - 1;	// Constante de contagem
-		TMR2 = 0;					// Reset ao registo de contagem
-		T2CONbits.TON = 1;			// Timer 2 ON
-	}
-	else return;
-}
-
-
-/*
- * Função para configurar o timer 3
- * Contar a uma frequencia de 2kHz
- */
-void timer3_config( nvoid){
-    T2CONbits.TCKPS = 0;            // K_presc = 1
-    PR3 = (PBCLK/2000) - 1;         // Constante de contagem
-    TMR3 = 0;                       // Reset ao registo de contagem
-    T3CONbits.TON = 1;              // Timer 3 ON
-}
-
-
-/*
- * Função para gerar um sinal PWM
- * Recebe como argumento o duty-cycle que queremos gerar
- * OC3 -> RD2 pin (6)
- */
-void pwm_config(void){
-    OC3CONbits.OCM = 6;
-    OC3CONbits.OCTSEL = 1;
-    OC3CONbits.ON = 1;
-}
-
-
-/*
- * Função para gerar um sinal PWM
- * Recebe como argumento o duty-cycle que queremos gerar
- * OC3 -> RD2 pin (6)
- */
-void pwm(unsigned int duty_cycle){
-    OC3RS = (PBCLK*duty_cycle)/(2000*100);
-}
-
-
-/*
- * Função para configurar a ADC
- */
-void adc_config(void) {
-	TRISBbits.TRISB0 = 1;		// RB0 como entrada
-	AD1PCFGbits.PCFG0 = 0;		// entrada analógica
-	AD1CHSbits.CH0SA = 0;		// seleciona entrada 0 (RB0) da ADC
-	AD1CON2bits.SMPI = 2-1;		// 2 samples
-	AD1CON1bits.SSRC = 7;		// auto-convert
-	AD1CON1bits.CLRASAM = 1;
-	AD1CON3bits.SAMC = 16;		// sample time 1.6 us
-	AD1CON1bits.ON = 1;			// enable ADC
-}
-
-
-/*
- * Função para iniciar a conversão da ADC
- */
-void adc_start(void) {
-    IFS1bits.AD1IF = 0;
-	AD1CON1bits.ASAM = 1;
-}
-
-
-/*
- * Função para ler a ADC
- * Devolve o valor lido (média de duas leituras)
- */
-unsigned int adc_read(void) {
-	while(IFS1bits.AD1IF == 0);
-	int val = (ADC1BUF0+ADC1BUF1)/2;
-	return val;
-}
 
 
 /*
  * Função de transferência
  */
 void transfer_func(unsigned int val){
-    val = val*100/1023;
-    pwm(val);
+    val = val*255/1023;
+    timer3_set_pwm(val, 3);
 }
