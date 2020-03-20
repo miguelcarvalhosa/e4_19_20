@@ -1,8 +1,8 @@
 build/default/production/main.o:  \
 main.c  \
-config_bits.h  \
-uart.h  \
-delay.h  \
- timer2.h  \
-timer3.h  \
-adc.h 
+../../Sources/config_bits.h  \
+ ../../Sources/uart.h  \
+../../Sources/delay.h  \
+../../Sources/timer2.h  \
+ ../../Sources/timer3.h  \
+../../Sources/adc.h 

@@ -4,12 +4,12 @@
     <logicalFolder name="HeaderFiles"
                    displayName="Header Files"
                    projectFiles="true">
-      <itemPath>config_bits.h</itemPath>
-      <itemPath>uart.h</itemPath>
-      <itemPath>delay.h</itemPath>
-      <itemPath>timer2.h</itemPath>
-      <itemPath>timer3.h</itemPath>
-      <itemPath>adc.h</itemPath>
+      <itemPath>../../Sources/adc.h</itemPath>
+      <itemPath>../../Sources/delay.h</itemPath>
+      <itemPath>../../Sources/timer2.h</itemPath>
+      <itemPath>../../Sources/timer3.h</itemPath>
+      <itemPath>../../Sources/uart.h</itemPath>
+      <itemPath>../../Sources/config_bits.h</itemPath>
     </logicalFolder>
     <logicalFolder name="LinkerScript"
                    displayName="Linker Files"
@@ -19,11 +19,11 @@
                    displayName="Source Files"
                    projectFiles="true">
       <itemPath>main.c</itemPath>
-      <itemPath>uart.c</itemPath>
-      <itemPath>delay.c</itemPath>
-      <itemPath>timer2.c</itemPath>
-      <itemPath>timer3.c</itemPath>
-      <itemPath>adc.c</itemPath>
+      <itemPath>../../Sources/adc.c</itemPath>
+      <itemPath>../../Sources/delay.c</itemPath>
+      <itemPath>../../Sources/timer2.c</itemPath>
+      <itemPath>../../Sources/timer3.c</itemPath>
+      <itemPath>../../Sources/uart.c</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
@@ -33,6 +33,7 @@
   </logicalFolder>
   <sourceRootList>
     <Elem>.</Elem>
+    <Elem>../../Sources</Elem>
   </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>

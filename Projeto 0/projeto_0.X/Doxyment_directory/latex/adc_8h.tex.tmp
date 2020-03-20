@@ -1,5 +1,5 @@
-\hypertarget{adc_8h}{}\section{adc.\+h File Reference}
-\label{adc_8h}\index{adc.\+h@{adc.\+h}}
+\hypertarget{adc_8h}{}\section{/mnt/d/\+Documentos/\+Eletrónica/instrumentacao/\+Sources/adc.h File Reference}
+\label{adc_8h}\index{/mnt/d/\+Documentos/\+Eletrónica/instrumentacao/\+Sources/adc.\+h@{/mnt/d/\+Documentos/\+Eletrónica/instrumentacao/\+Sources/adc.\+h}}
 
 
 Module to control A\+DC of the P\+I\+C32\+MX.  
@@ -25,6 +25,8 @@ Module to control A\+DC of the P\+I\+C32\+MX.
 
 \begin{DoxyAuthor}{Author}
 Miguel Carvalhosa (\href{mailto:miguelcarvalhosa@ua.pt}{\tt miguelcarvalhosa@ua.\+pt}) 
+
+Hugo Leal (\href{mailto:micaelleal1@ua.pt}{\tt micaelleal1@ua.\+pt}) 
 \end{DoxyAuthor}
 
 

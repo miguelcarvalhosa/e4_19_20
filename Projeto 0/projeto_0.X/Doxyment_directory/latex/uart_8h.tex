@@ -1,0 +1,92 @@
+\hypertarget{uart_8h}{}\section{/mnt/d/\+Documentos/\+Eletrónica/instrumentacao/\+Sources/uart.h File Reference}
+\label{uart_8h}\index{/mnt/d/\+Documentos/\+Eletrónica/instrumentacao/\+Sources/uart.\+h@{/mnt/d/\+Documentos/\+Eletrónica/instrumentacao/\+Sources/uart.\+h}}
+
+
+Module to control U\+A\+R\+T1 of the P\+I\+C32\+MX.  
+
+
+{\ttfamily \#include $<$stdint.\+h$>$}\newline
+Include dependency graph for uart.\+h\+:
+% FIG 0
+\subsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{uart_8h_a97ee8be60ff9ae1cfface03bc50f1d94}\label{uart_8h_a97ee8be60ff9ae1cfface03bc50f1d94}} 
+\#define {\bfseries S\+Y\+S\+C\+LK}~80000000
+\item 
+\mbox{\Hypertarget{uart_8h_aac23c0047c8aba00b8c269fc2a181959}\label{uart_8h_aac23c0047c8aba00b8c269fc2a181959}} 
+\#define {\bfseries P\+B\+C\+LK}~S\+Y\+S\+C\+LK/2
+\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \hyperlink{uart_8h_a5a8866e2608bc38721fd168e697b2d79}{uart1\+\_\+config} (uint32\+\_\+t baudrate, uint8\+\_\+t databits, uint8\+\_\+t parity, uint8\+\_\+t stopbits)
+\begin{DoxyCompactList}\small\item\em A function to configure the U\+A\+R\+T1. \end{DoxyCompactList}\item 
+void \hyperlink{uart_8h_a4e2849c3da29745c5a22833e3d64a7d9}{uart1\+\_\+putc} (uint8\+\_\+t byte2send)
+\begin{DoxyCompactList}\small\item\em A function to print a character on the terminal by U\+A\+R\+T1. \end{DoxyCompactList}\item 
+void \hyperlink{uart_8h_acd3fac8b49e27009e2be70f195e949ed}{uart1\+\_\+puts} (uint8\+\_\+t $\ast$s)
+\begin{DoxyCompactList}\small\item\em A function to print a string on the terminal by U\+A\+R\+T1. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Module to control U\+A\+R\+T1 of the P\+I\+C32\+MX. 
+
+\begin{DoxyAuthor}{Author}
+Miguel Carvalhosa (\href{mailto:miguelcarvalhosa@ua.pt}{\tt miguelcarvalhosa@ua.\+pt}) 
+
+Hugo Leal (\href{mailto:micaelleal1@ua.pt}{\tt micaelleal1@ua.\+pt}) 
+\end{DoxyAuthor}
+
+
+\subsection{Function Documentation}
+\mbox{\Hypertarget{uart_8h_a5a8866e2608bc38721fd168e697b2d79}\label{uart_8h_a5a8866e2608bc38721fd168e697b2d79}} 
+\index{uart.\+h@{uart.\+h}!uart1\+\_\+config@{uart1\+\_\+config}}
+\index{uart1\+\_\+config@{uart1\+\_\+config}!uart.\+h@{uart.\+h}}
+\subsubsection{\texorpdfstring{uart1\+\_\+config()}{uart1\_config()}}
+{\footnotesize\ttfamily void uart1\+\_\+config (\begin{DoxyParamCaption}\item[{uint32\+\_\+t}]{baudrate,  }\item[{uint8\+\_\+t}]{databits,  }\item[{uint8\+\_\+t}]{parity,  }\item[{uint8\+\_\+t}]{stopbits }\end{DoxyParamCaption})}
+
+
+
+A function to configure the U\+A\+R\+T1. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em baudrate} & Configure the baudrate\+: default values from 2400 to 921600 (default 9600) \\
+\hline
+{\em databits} & Configure databits\+: 8 or 9 bits (default 8 bits) \\
+\hline
+{\em parity} & Configure paritybits\+: 0 -\/ no parity, 1 -\/ odd, 2 -\/ even (default odd parity) \\
+\hline
+{\em stopbits} & Configure stopbits\+: 1 or 2 bits (default 2 bits) \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{uart_8h_a4e2849c3da29745c5a22833e3d64a7d9}\label{uart_8h_a4e2849c3da29745c5a22833e3d64a7d9}} 
+\index{uart.\+h@{uart.\+h}!uart1\+\_\+putc@{uart1\+\_\+putc}}
+\index{uart1\+\_\+putc@{uart1\+\_\+putc}!uart.\+h@{uart.\+h}}
+\subsubsection{\texorpdfstring{uart1\+\_\+putc()}{uart1\_putc()}}
+{\footnotesize\ttfamily void uart1\+\_\+putc (\begin{DoxyParamCaption}\item[{uint8\+\_\+t}]{byte2send }\end{DoxyParamCaption})}
+
+
+
+A function to print a character on the terminal by U\+A\+R\+T1. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em byte2send} & Character to print. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{uart_8h_acd3fac8b49e27009e2be70f195e949ed}\label{uart_8h_acd3fac8b49e27009e2be70f195e949ed}} 
+\index{uart.\+h@{uart.\+h}!uart1\+\_\+puts@{uart1\+\_\+puts}}
+\index{uart1\+\_\+puts@{uart1\+\_\+puts}!uart.\+h@{uart.\+h}}
+\subsubsection{\texorpdfstring{uart1\+\_\+puts()}{uart1\_puts()}}
+{\footnotesize\ttfamily void uart1\+\_\+puts (\begin{DoxyParamCaption}\item[{uint8\+\_\+t $\ast$}]{s }\end{DoxyParamCaption})}
+
+
+
+A function to print a string on the terminal by U\+A\+R\+T1. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em s} & Pointer to the string to print. \\
+\hline
+\end{DoxyParams}

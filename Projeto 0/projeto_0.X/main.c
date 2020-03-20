@@ -3,12 +3,12 @@
 #include <xc.h>
 #include <stdint.h>
 
-#include "config_bits.h"
-#include "uart.h"
-#include "delay.h"
-#include "timer2.h"
-#include "timer3.h"
-#include "adc.h"
+#include "../../Sources/config_bits.h"
+#include "../../Sources/uart.h"
+#include "../../Sources/delay.h"
+#include "../../Sources/timer2.h"
+#include "../../Sources/timer3.h"
+#include "../../Sources/adc.h"
 
 
 /*
@@ -17,12 +17,13 @@
 #define SYSCLK			80000000
 #define PBCLK			SYSCLK/2
 #define ADC_SAMPLES		2
+#define PWM_STEPS		256			// Se alterado, deve-se alterar também no ficheiro "timer3.h"
 
 
 /*
  * Protótipos das funções
  */
-void transfer_func(unsigned int val);
+void transfer_func(uint16_t val);
 
 
 /*
@@ -31,50 +32,50 @@ void transfer_func(unsigned int val);
 int main(int argc, char** argv) {
 	
 	
-	TRISAbits.TRISA3 = 0;
-	TRISCbits.TRISC2 = 0;
-	TRISDbits.TRISD2 = 0;
-	timer2_config(500);
-	timer3_config_pwm(2000, 0, 3);
-	uart1_config(9600, 8, 1, 2);
-	adc_config(0, ADC_SAMPLES);
+	//TRISAbits.TRISA3 = 0;
+	//TRISCbits.TRISC2 = 0;
 	
-	uart1_puts("Init\n");
+	// O pino RD2 corresponde ao OC3 e está ligado ao pino 6 da placa MAX32
+	TRISDbits.TRISD2 = 0;			// Configuração do pino RD2 como saída
+	
+	timer2_config(500);				// Configuração do Timer2 com freq = 500Hz
+	
+	timer3_config_pwm(2000, 0, 3);	// Configuração do Timer3 para gerar um sinal PWM com freq = 2kHz no pino OC3
+	
+	uart1_config(9600, 8, 1, 2);	// COnfiguração da UART1 com baudrate=9600, 8 databits, paridade ímpar e 2 stopbits
+	
+	// O canal 0 da ADC corresponde ao pino RB0 e está ligado ao pino A0 da placa MAX32
+	adc_config(0, ADC_SAMPLES);		// Configuração da ADC para ler o canal 0
+	
     
 	// Teste do PWM
-	int i=0;
-	for(i; i<255; i++) {
-		timer3_set_pwm(i, 3);
-		delay_ms(10);
-	}
+	//int i=0;
+	//for(i; i<255; i++) {
+	//	timer3_set_pwm(i, 3);
+	//	delay_ms(10);
+	//}
 	
 	while(1) {
 		if(IFS0bits.T2IF == 1) {
-			//LATAbits.LATA3 = !LATAbits.LATA3;		// Pin 13
-			PORTAINV = 0x08;
-			adc_start();
-			uint32_t val = adc_read(ADC_SAMPLES);
+			adc_start();			// Início da conversão da ADC
+			uint16_t adc_val = adc_read(ADC_SAMPLES);		// Leitura da ADC
 			
-			// Cálculos para mostrar o valor no terminal
-			uint32_t val33 = val*33/1023;
-			uint8_t val1 = val33/10;
-			uint8_t val0 = val33%10;
-			uart1_putc(0x30 + val1);
+			// Cálculos para mostrar no terminal o valor lido da ADC na gama [0 - 3.3]
+			uint16_t val33 = adc_val*33/1023;
+			uint8_t ms_dig = val33/10;		// Dígito mais significativo
+			uint8_t ls_dig = val33%10;		// Dígito menos significativo
+			
+			// Impressão dos dígitos no terminal. Deve-se somar 0x30 para converter em ASCII
+			uart1_putc(0x30 + ms_dig);
 			uart1_putc('.');
-			uart1_putc(0x30 + val0);
+			uart1_putc(0x30 + ls_dig);
 			uart1_putc('\n');
             
-			transfer_func(val); 
+			transfer_func(adc_val); 
 
 			IFS0bits.T2IF = 0;
 		}
-		if(IFS0bits.T3IF == 1) {
-			LATCbits.LATC2 = !LATCbits.LATC2;		// Pin 22
-			IFS0bits.T3IF = 0;
-		}
 	}
-	
-	
 	
 	
 	return (EXIT_SUCCESS);
@@ -85,7 +86,7 @@ int main(int argc, char** argv) {
 /*
  * Função de transferência
  */
-void transfer_func(unsigned int val){
-    val = val*255/1023;
-    timer3_set_pwm(val, 3);
+void transfer_func(uint16_t val){
+    val = val*(PWM_STEPS-1)/1023;		// Conversão do valor lido pela ADC da gama [0 - 1023] para a gama [0 - (PWM_STEPS-1)]
+    timer3_set_pwm(val, 3);				// Gerar um sinal PWM com dutycycle val no pino OC3
 }

@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.13"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Sistemas de Instrumentação Eletrónica - Projeto 0: uart.h Source File</title>
+<title>Digital Data Aquisition System: /mnt/d/Documentos/Eletrónica/instrumentacao/Sources/uart.h Source File</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -21,7 +21,7 @@
  <tbody>
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
-   <div id="projectname">Sistemas de Instrumentação Eletrónica - Projeto 0
+   <div id="projectname">Digital Data Aquisition System
    </div>
   </td>
  </tr>
@@ -42,7 +42,6 @@ $(function() {
 });
 </script>
 <div id="main-nav"></div>
-</div><!-- top -->
 <!-- window showing the filter options -->
 <div id="MSearchSelectWindow"
      onmouseover="return searchBox.OnSearchSelectShow()"
@@ -57,12 +56,20 @@ $(function() {
 </iframe>
 </div>
 
+<div id="nav-path" class="navpath">
+  <ul>
+<li class="navelem"><a class="el" href="dir_937900b87e0c7a5fa01190c395fb83f7.html">Sources</a></li>  </ul>
+</div>
+</div><!-- top -->
 <div class="header">
   <div class="headertitle">
 <div class="title">uart.h</div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#ifndef _UART_H</span></div><div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="preprocessor">#define _UART_H</span></div><div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;</div><div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;</div><div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="comment">/*</span></div><div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="comment"> * Protótipos das funções</span></div><div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="comment"> */</span></div><div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="keywordtype">void</span> uart1_config(<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> baud, <span class="keywordtype">unsigned</span> <span class="keywordtype">char</span> databits, <span class="keywordtype">unsigned</span> <span class="keywordtype">char</span> parity, <span class="keywordtype">unsigned</span> <span class="keywordtype">char</span> stopbits);</div><div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="keywordtype">void</span> uart1_putc(<span class="keywordtype">char</span> byte2send);</div><div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="keywordtype">void</span> uart1_puts(<span class="keywordtype">char</span> *s);</div><div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;</div><div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;</div><div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="preprocessor">#endif</span></div></div><!-- fragment --></div><!-- contents -->
+<a href="uart_8h.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;</div><div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="preprocessor">#ifndef _UART_H</span></div><div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="preprocessor">#define _UART_H</span></div><div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;</div><div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;</div><div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="preprocessor">#include &lt;stdint.h&gt;</span></div><div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;</div><div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;</div><div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="preprocessor">#ifndef SYSCLK</span></div><div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;<span class="preprocessor">    #define SYSCLK      80000000</span></div><div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="preprocessor">#endif</span></div><div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;</div><div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;<span class="preprocessor">#ifndef PBCLK</span></div><div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;<span class="preprocessor">    #define PBCLK       SYSCLK/2</span></div><div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;<span class="preprocessor">#endif</span></div><div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;</div><div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;</div><div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;<span class="keywordtype">void</span> <a class="code" href="uart_8h.html#a5a8866e2608bc38721fd168e697b2d79">uart1_config</a>(uint32_t baudrate, uint8_t databits, uint8_t parity, uint8_t stopbits);</div><div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;</div><div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;</div><div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;<span class="keywordtype">void</span> <a class="code" href="uart_8h.html#a4e2849c3da29745c5a22833e3d64a7d9">uart1_putc</a>(uint8_t byte2send);</div><div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;</div><div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;</div><div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;<span class="keywordtype">void</span> <a class="code" href="uart_8h.html#acd3fac8b49e27009e2be70f195e949ed">uart1_puts</a>(uint8_t *s);</div><div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;</div><div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;</div><div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;<span class="preprocessor">#endif</span></div><div class="ttc" id="uart_8h_html_a5a8866e2608bc38721fd168e697b2d79"><div class="ttname"><a href="uart_8h.html#a5a8866e2608bc38721fd168e697b2d79">uart1_config</a></div><div class="ttdeci">void uart1_config(uint32_t baudrate, uint8_t databits, uint8_t parity, uint8_t stopbits)</div><div class="ttdoc">A function to configure the UART1. </div><div class="ttdef"><b>Definition:</b> uart.c:14</div></div>
+<div class="ttc" id="uart_8h_html_a4e2849c3da29745c5a22833e3d64a7d9"><div class="ttname"><a href="uart_8h.html#a4e2849c3da29745c5a22833e3d64a7d9">uart1_putc</a></div><div class="ttdeci">void uart1_putc(uint8_t byte2send)</div><div class="ttdoc">A function to print a character on the terminal by UART1. </div><div class="ttdef"><b>Definition:</b> uart.c:41</div></div>
+<div class="ttc" id="uart_8h_html_acd3fac8b49e27009e2be70f195e949ed"><div class="ttname"><a href="uart_8h.html#acd3fac8b49e27009e2be70f195e949ed">uart1_puts</a></div><div class="ttdeci">void uart1_puts(uint8_t *s)</div><div class="ttdoc">A function to print a string on the terminal by UART1. </div><div class="ttdef"><b>Definition:</b> uart.c:50</div></div>
+</div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
 Generated by &#160;<a href="http://www.doxygen.org/index.html">
