@@ -23,7 +23,7 @@
 /*
  * Protótipos das funções
  */
-void transfer_func(uint16_t val);
+uint16_t transfer_func(uint16_t val);
 
 
 /*
@@ -31,9 +31,12 @@ void transfer_func(uint16_t val);
  */
 int main(int argc, char** argv) {
 	
+	uint16_t adc_val = 0;			// Valor lido pela ADC
+	uint16_t val33 = 0;				// Valor lido pela ADC na gama [0 - 33]
+	uint8_t ms_dig = 0;				// Dígito mais significativo a imprimir no terminal
+	uint8_t ls_dig = 0;				// Dígito menos significativo a imprimir no terminal
+	uint16_t output_val = 0;		// Valor na saída da função de transferência
 	
-	//TRISAbits.TRISA3 = 0;
-	//TRISCbits.TRISC2 = 0;
 	
 	// O pino RD2 corresponde ao OC3 e está ligado ao pino 6 da placa MAX32
 	TRISDbits.TRISD2 = 0;			// Configuração do pino RD2 como saída
@@ -58,12 +61,12 @@ int main(int argc, char** argv) {
 	while(1) {
 		if(IFS0bits.T2IF == 1) {
 			adc_start();			// Início da conversão da ADC
-			uint16_t adc_val = adc_read(ADC_SAMPLES);		// Leitura da ADC
+			adc_val = adc_read(ADC_SAMPLES);	// Leitura da ADC
 			
 			// Cálculos para mostrar no terminal o valor lido da ADC na gama [0 - 3.3]
-			uint16_t val33 = adc_val*33/1023;
-			uint8_t ms_dig = val33/10;		// Dígito mais significativo
-			uint8_t ls_dig = val33%10;		// Dígito menos significativo
+			val33 = adc_val*33/1023;		// Conversão do valor lido pela ADC da gama [0 - 1023] para a gama [0 - 33]
+			ms_dig = val33/10;				// Dígito mais significativo
+			ls_dig = val33%10;				// Dígito menos significativo
 			
 			// Impressão dos dígitos no terminal. Deve-se somar 0x30 para converter em ASCII
 			uart1_putc(0x30 + ms_dig);
@@ -71,13 +74,13 @@ int main(int argc, char** argv) {
 			uart1_putc(0x30 + ls_dig);
 			uart1_putc('\n');
             
-			transfer_func(adc_val); 
+			output_val = transfer_func(adc_val); 
+			
+			timer3_set_pwm(output_val, 3);	// Gerar um sinal PWM com dutycycle output_val no pino OC3
 
 			IFS0bits.T2IF = 0;
 		}
 	}
-	
-	
 	return (EXIT_SUCCESS);
 }
 
@@ -85,8 +88,8 @@ int main(int argc, char** argv) {
 
 /*
  * Função de transferência
+ * Converte o valor lido pela ADC da gama [0 - 1023] para a gama [0 - (PWM_STEPS-1)]
  */
-void transfer_func(uint16_t val){
-    val = val*(PWM_STEPS-1)/1023;		// Conversão do valor lido pela ADC da gama [0 - 1023] para a gama [0 - (PWM_STEPS-1)]
-    timer3_set_pwm(val, 3);				// Gerar um sinal PWM com dutycycle val no pino OC3
+uint16_t transfer_func(uint16_t val){
+    return (val*(PWM_STEPS-1)/1023);
 }
