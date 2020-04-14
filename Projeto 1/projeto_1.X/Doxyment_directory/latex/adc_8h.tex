@@ -1,0 +1,75 @@
+\hypertarget{adc_8h}{}\section{/mnt/d/\+Documentos/\+Eletrónica/instrumentacao/\+Sources/adc.h File Reference}
+\label{adc_8h}\index{/mnt/d/\+Documentos/\+Eletrónica/instrumentacao/\+Sources/adc.\+h@{/mnt/d/\+Documentos/\+Eletrónica/instrumentacao/\+Sources/adc.\+h}}
+
+
+Module to control A\+DC of the P\+I\+C32\+MX.  
+
+
+{\ttfamily \#include $<$stdint.\+h$>$}\newline
+Include dependency graph for adc.\+h\+:
+% FIG 0
+This graph shows which files directly or indirectly include this file\+:
+% FIG 1
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+int8\+\_\+t \hyperlink{adc_8h_afe8a5086834298cb0921d80d5146f209}{adc\+\_\+config} (uint8\+\_\+t channel, uint8\+\_\+t samples)
+\begin{DoxyCompactList}\small\item\em A function to configure the A\+DC. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{adc_8h_af5ce9946f045a1396ac1a147252a3e76}\label{adc_8h_af5ce9946f045a1396ac1a147252a3e76}} 
+void \hyperlink{adc_8h_af5ce9946f045a1396ac1a147252a3e76}{adc\+\_\+start} (void)
+\begin{DoxyCompactList}\small\item\em A function to start the conversion. \end{DoxyCompactList}\item 
+uint16\+\_\+t \hyperlink{adc_8h_a5af05cc48d199cae150afa5751e4ae58}{adc\+\_\+read} (void)
+\begin{DoxyCompactList}\small\item\em A function to get the result of the conversion. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Module to control A\+DC of the P\+I\+C32\+MX. 
+
+\begin{DoxyAuthor}{Author}
+Miguel Carvalhosa (\href{mailto:miguelcarvalhosa@ua.pt}{\tt miguelcarvalhosa@ua.\+pt}) 
+
+Hugo Leal (\href{mailto:micaelleal1@ua.pt}{\tt micaelleal1@ua.\+pt}) 
+\end{DoxyAuthor}
+
+
+\subsection{Function Documentation}
+\mbox{\Hypertarget{adc_8h_afe8a5086834298cb0921d80d5146f209}\label{adc_8h_afe8a5086834298cb0921d80d5146f209}} 
+\index{adc.\+h@{adc.\+h}!adc\+\_\+config@{adc\+\_\+config}}
+\index{adc\+\_\+config@{adc\+\_\+config}!adc.\+h@{adc.\+h}}
+\subsubsection{\texorpdfstring{adc\+\_\+config()}{adc\_config()}}
+{\footnotesize\ttfamily int8\+\_\+t adc\+\_\+config (\begin{DoxyParamCaption}\item[{uint8\+\_\+t}]{channel,  }\item[{uint8\+\_\+t}]{samples }\end{DoxyParamCaption})}
+
+
+
+A function to configure the A\+DC. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em channel} & Input channel to be converted \\
+\hline
+{\em samples} & Number of samples in each conversion\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A result code 
+\end{DoxyReturn}
+
+\begin{DoxyRetVals}{Return values}
+{\em 0} & Successfull configuration \\
+\hline
+{\em -\/1} & Invalid channel \\
+\hline
+\end{DoxyRetVals}
+\mbox{\Hypertarget{adc_8h_a5af05cc48d199cae150afa5751e4ae58}\label{adc_8h_a5af05cc48d199cae150afa5751e4ae58}} 
+\index{adc.\+h@{adc.\+h}!adc\+\_\+read@{adc\+\_\+read}}
+\index{adc\+\_\+read@{adc\+\_\+read}!adc.\+h@{adc.\+h}}
+\subsubsection{\texorpdfstring{adc\+\_\+read()}{adc\_read()}}
+{\footnotesize\ttfamily uint16\+\_\+t adc\+\_\+read (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+A function to get the result of the conversion. 
+
+\begin{DoxyReturn}{Returns}
+Result of the conversion 
+\end{DoxyReturn}

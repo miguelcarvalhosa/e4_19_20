@@ -1,0 +1,103 @@
+\hypertarget{sharp_8h}{}\section{sharp.\+h File Reference}
+\label{sharp_8h}\index{sharp.\+h@{sharp.\+h}}
+
+
+Module to control the infrared distance sensor G\+P2\+Y0\+A21\+Y\+K0F.  
+
+
+{\ttfamily \#include $<$stdint.\+h$>$}\newline
+{\ttfamily \#include $<$xc.\+h$>$}\newline
+{\ttfamily \#include \char`\"{}../../\+Sources/adc.\+h\char`\"{}}\newline
+Include dependency graph for sharp.\+h\+:
+% FIG 0
+\subsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{sharp_8h_a3b1cdf28b8670bde0ad5dde3ef89a831}\label{sharp_8h_a3b1cdf28b8670bde0ad5dde3ef89a831}} 
+\#define {\bfseries S\+H\+A\+R\+P\+\_\+\+B1}~127048
+\item 
+\mbox{\Hypertarget{sharp_8h_abd93e862fd8d9a275f6ef466791166ea}\label{sharp_8h_abd93e862fd8d9a275f6ef466791166ea}} 
+\#define {\bfseries S\+H\+A\+R\+P\+\_\+\+B0}~0-\/181
+\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+int8\+\_\+t \hyperlink{sharp_8h_a295ac330b5f758637eaa9bc582bbefec}{sharp\+\_\+init} (uint8\+\_\+t adc\+\_\+pin, uint8\+\_\+t nsamples)
+\begin{DoxyCompactList}\small\item\em A function to initialize the sensor. The valid range input signal is by default on pin R\+E8 (pin 2 on chipkit max32 board) \end{DoxyCompactList}\item 
+uint16\+\_\+t \hyperlink{sharp_8h_ab640ef850cef7197d2dfc2706a5718ea}{sharp\+\_\+read} (void)
+\begin{DoxyCompactList}\small\item\em A function to measure the distance. \end{DoxyCompactList}\item 
+uint16\+\_\+t \hyperlink{sharp_8h_ad9e64ee8beba337e3a3ff44a3ed68fef}{sharp\+\_\+get\+\_\+voltage} (void)
+\begin{DoxyCompactList}\small\item\em A function to measure the output voltage of the sensor. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Module to control the infrared distance sensor G\+P2\+Y0\+A21\+Y\+K0F. 
+
+\begin{DoxyAuthor}{Author}
+Miguel Carvalhosa (\href{mailto:miguelcarvalhosa@ua.pt}{\tt miguelcarvalhosa@ua.\+pt}) 
+
+Hugo Leal (\href{mailto:micaelleal1@ua.pt}{\tt micaelleal1@ua.\+pt}) 
+\end{DoxyAuthor}
+
+
+\subsection{Function Documentation}
+\mbox{\Hypertarget{sharp_8h_ad9e64ee8beba337e3a3ff44a3ed68fef}\label{sharp_8h_ad9e64ee8beba337e3a3ff44a3ed68fef}} 
+\index{sharp.\+h@{sharp.\+h}!sharp\+\_\+get\+\_\+voltage@{sharp\+\_\+get\+\_\+voltage}}
+\index{sharp\+\_\+get\+\_\+voltage@{sharp\+\_\+get\+\_\+voltage}!sharp.\+h@{sharp.\+h}}
+\subsubsection{\texorpdfstring{sharp\+\_\+get\+\_\+voltage()}{sharp\_get\_voltage()}}
+{\footnotesize\ttfamily uint16\+\_\+t sharp\+\_\+get\+\_\+voltage (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+A function to measure the output voltage of the sensor. 
+
+\begin{DoxyReturn}{Returns}
+Output voltage of the sensor in range \mbox{[}0 -\/ 1023\mbox{]} 
+\end{DoxyReturn}
+\mbox{\Hypertarget{sharp_8h_a295ac330b5f758637eaa9bc582bbefec}\label{sharp_8h_a295ac330b5f758637eaa9bc582bbefec}} 
+\index{sharp.\+h@{sharp.\+h}!sharp\+\_\+init@{sharp\+\_\+init}}
+\index{sharp\+\_\+init@{sharp\+\_\+init}!sharp.\+h@{sharp.\+h}}
+\subsubsection{\texorpdfstring{sharp\+\_\+init()}{sharp\_init()}}
+{\footnotesize\ttfamily int8\+\_\+t sharp\+\_\+init (\begin{DoxyParamCaption}\item[{uint8\+\_\+t}]{adc\+\_\+pin,  }\item[{uint8\+\_\+t}]{nsamples }\end{DoxyParamCaption})}
+
+
+
+A function to initialize the sensor. The valid range input signal is by default on pin R\+E8 (pin 2 on chipkit max32 board) 
+
+
+\begin{DoxyParams}{Parameters}
+{\em adc\+\_\+pin} & Pin to read the distance value with the A\+DC \\
+\hline
+{\em nsamples} & Number of samples in each measurement\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A result code 
+\end{DoxyReturn}
+
+\begin{DoxyRetVals}{Return values}
+{\em 0} & Successfull configuration \\
+\hline
+{\em -\/1} & Invalid adc\+\_\+pin \\
+\hline
+\end{DoxyRetVals}
+\mbox{\Hypertarget{sharp_8h_ab640ef850cef7197d2dfc2706a5718ea}\label{sharp_8h_ab640ef850cef7197d2dfc2706a5718ea}} 
+\index{sharp.\+h@{sharp.\+h}!sharp\+\_\+read@{sharp\+\_\+read}}
+\index{sharp\+\_\+read@{sharp\+\_\+read}!sharp.\+h@{sharp.\+h}}
+\subsubsection{\texorpdfstring{sharp\+\_\+read()}{sharp\_read()}}
+{\footnotesize\ttfamily uint16\+\_\+t sharp\+\_\+read (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+A function to measure the distance. 
+
+\begin{DoxyReturn}{Returns}
+Result of the measurement in millimeters in range \mbox{[}100, 600\mbox{]} 
+\end{DoxyReturn}
+
+\begin{DoxyRetVals}{Return values}
+{\em 0} & Object is not in valid range \\
+\hline
+{\em others} & Distance to object \\
+\hline
+\end{DoxyRetVals}
