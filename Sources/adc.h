@@ -39,12 +39,10 @@ void adc_start(void);
 
 /**
  * \brief A function to get the result of the conversion.
- * 
- * \param samples       Number of samples in each conversion
  *
  *  \return Result of the conversion
  *
  */
-uint32_t adc_read(uint8_t samples);
+uint16_t adc_read(void);
 
 #endif

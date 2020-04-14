@@ -3,7 +3,11 @@
 #include <stdint.h>
 
 
+uint8_t nsamples;
+
+
 int8_t adc_config(uint8_t channel, uint8_t samples) {
+	nsamples = samples;
 	int8_t retval = 0;
 	switch(channel) {
 		case 0:
@@ -90,7 +94,7 @@ int8_t adc_config(uint8_t channel, uint8_t samples) {
 			retval = -1;
 			break;
 	}
-	AD1CON2bits.SMPI = samples-1;		// n samples
+	AD1CON2bits.SMPI = nsamples-1;		// n samples
 	AD1CON1bits.SSRC = 7;		// auto-convert
 	AD1CON1bits.CLRASAM = 1;
 	AD1CON3bits.SAMC = 16;		// sample time 1.6 us
@@ -105,15 +109,15 @@ void adc_start(void) {
 }
 
 
-uint32_t adc_read(uint8_t samples) {
+uint16_t adc_read(void) {
 	while(IFS1bits.AD1IF == 0);
 	int i=0;
 	uint32_t soma = 0;
 	uint32_t buf[16] = {ADC1BUF0, ADC1BUF1, ADC1BUF2, ADC1BUF3, ADC1BUF4, ADC1BUF5, ADC1BUF6, ADC1BUF7, 
 						ADC1BUF8, ADC1BUF9, ADC1BUFA, ADC1BUFB, ADC1BUFC, ADC1BUFD, ADC1BUFE, ADC1BUFF};
-	for(i; i<samples; i++) {
+	for(i; i<nsamples; i++) {
 		soma += buf[i];
 	}
-	uint32_t val = soma/samples;
+	uint32_t val = soma/nsamples;
 	return val;
 }

@@ -57,4 +57,13 @@ void uart1_putc(uint8_t byte2send);
 void uart1_puts(uint8_t *s);
 
 
+/**
+ * \brief A function to print an integer with 4 digits
+ * 
+ * \param val           Integer in range [0 - 9999]
+ * 
+ */
+void uart1_int_4dig(uint16_t val);
+
+
 #endif

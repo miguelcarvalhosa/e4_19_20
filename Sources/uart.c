@@ -45,6 +45,24 @@ void uart1_putc(uint8_t byte2send) {
 
 
 /*
+ * Função para enviar um inteiro com 4 dígitos
+ */
+void uart1_int_4dig(uint16_t val) {
+	uint16_t res, rem;
+	res = val / 1000;
+	rem = val % 1000;
+	uart1_putc(res + 48);
+	res = rem / 100;
+	rem = rem % 100;
+	uart1_putc(res + 48);
+	res = rem / 10;
+	rem = rem % 10;
+	uart1_putc(res + 48);
+	uart1_putc(rem + 48);
+}
+
+
+/*
  * Função para enviar uma string
  */
 void uart1_puts(uint8_t *s) {
