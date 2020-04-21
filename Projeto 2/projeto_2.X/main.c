@@ -21,7 +21,7 @@
 /*
  * Protótipos das funções
  */
-void control_motor(uint8_t rpm);         // function to control motor speed -> rpm entre 0 e 80
+void control_motor(int step_rpm);         // function to send pwm signal to half H-bridge input -> step_rpm [-127,127]
 
 
 /*
@@ -42,34 +42,35 @@ int main(int argc, char** argv) {
     timer3_config_pwm(20000, 0, 3);		// Configuração do Timer3 para gerar um sinal PWM com freq = 20kHz no pino OC3
     
     // Teste
-	//int i=0;
-	//for(i; i<255; i++) {
+	//int i=-127;
+	//for(i; i<127; i++) {
 	//	control_motor(i);
 	//	delay_ms(20);
 	//}
     
 	while(1) {
-		control_motor(40);
+		control_motor(0);
 	}
 	
 	return (EXIT_SUCCESS);
 }
 
-
-void control_motor(uint8_t rpm){
+/*
+ * 
+ */
+void control_motor(int step_rpm){
     
-    uint16_t duty = (rpm*(PWM_STEPS-1)/80);       //convert rpm to steps
-    
-    if(duty>=0 && duty<128){                    // ir para um lado
-        timer3_set_pwm(duty,2);                 
+    if(step_rpm>0){
+        int duty = (step_rpm*(PWM_STEPS-1)/127);            //convert rpm to steps and rotate right
+        timer3_set_pwm(duty,2);
         timer3_set_pwm(255-duty,3);
-    }
-    else if(duty>128 && duty<=225){             // ir para outro lado
-        timer3_set_pwm(duty,2);     
-        timer3_set_pwm(255-duty,3);
-    }
-    else{
-        timer3_set_pwm(duty,2);                 // parado
+    }else if(step_rpm<0){
+        int duty = -(step_rpm*(PWM_STEPS-1)/127);           //convert rpm to steps and rotate left
+        timer3_set_pwm(255-duty,2);
+        timer3_set_pwm(duty,3); 
+    }else{
+        int duty = (step_rpm*(PWM_STEPS-1)/127);            //convert rpm to steps and stop
+        timer3_set_pwm(duty,2);
         timer3_set_pwm(duty,3);
     }
 }
