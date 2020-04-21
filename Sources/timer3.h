@@ -25,7 +25,9 @@
     #define PBCLK       SYSCLK/2
 #endif
 
-#define PWM_STEPS   256
+#ifndef PWM_STEPS
+    #define PWM_STEPS   256
+#endif
 
 
 /**

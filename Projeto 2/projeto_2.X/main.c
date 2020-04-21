@@ -15,24 +15,25 @@
  */
 #define SYSCLK			80000000
 #define PBCLK			SYSCLK/2
-#define PWM_STEPS		256			// Se alterado, deve-se alterar também no ficheiro "timer3.h"
+#define PWM_STEPS		256
 
 
 /*
  * Protótipos das funções
  */
-void control_motor(int rpm);         // function to control motor speed -> rpm entre 0 e 80
+void control_motor(uint8_t rpm);         // function to control motor speed -> rpm entre 0 e 80
+
 
 /*
  * Main
  */
 int main(int argc, char** argv) {
    
-    TRISDbits.TRISD12 = 1;				// Pino RD12 configurado como entrada. Este pino corresponde é usado como enable da ponte H e é o pino 8 da placa chipKit MAX32 
+    TRISDbits.TRISD12 = 0;				// Pino RD12 configurado como saída. Este pino é usado como enable da ponte H e é o pino 8 da placa chipKit MAX32 
     
-    TRISDbits.TRISD2 = 1;				// Pino RD1 configurado como entrada. Este pino corresponde ao OC2 e ao pino 5 da placa chipKit MAX32
+    TRISDbits.TRISD1 = 0;				// Pino RD1 configurado como saída. Este pino corresponde ao OC2 e ao pino 5 da placa chipKit MAX32
     
-    TRISDbits.TRISD2 = 1;				// Pino RD2 configurado como entrada. Este pino corresponde ao OC3 e ao pino 6 da placa chipKit MAX32
+    TRISDbits.TRISD2 = 0;				// Pino RD2 configurado como saída. Este pino corresponde ao OC3 e ao pino 6 da placa chipKit MAX32
 	
     uart1_config(9600, 8, 0, 1);		// Configuração da UART1 com baudrate 9600, 8 data bits, sem paridade e 1 stop bit
 	uart1_puts("Init\n\n");
@@ -54,7 +55,8 @@ int main(int argc, char** argv) {
 	return (EXIT_SUCCESS);
 }
 
-void control_motor(int rpm){
+
+void control_motor(uint8_t rpm){
     
     uint16_t duty = (rpm*(PWM_STEPS-1)/80);       //convert rpm to steps
     
