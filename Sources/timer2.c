@@ -6,13 +6,13 @@
 /*
  * Prescaler array
  */
-const uint16_t prescaler[8] = {1,2,4,8,16,32,64,256};
+static const uint16_t prescaler[8] = {1,2,4,8,16,32,64,256};
 
 
 /*
  * Function to choose the prescaler based on the frequency value
  */
-int8_t choose_prescaler(uint32_t fout) {
+int8_t timer2_choose_prescaler(uint32_t fout) {
 	uint8_t i;
 	int8_t retval = -1;
 	for (i = 0; i < 8; i++) {
@@ -29,7 +29,7 @@ int8_t choose_prescaler(uint32_t fout) {
  */
 int8_t timer2_config(uint32_t freq) {
 	int8_t retval = -1;
-	int8_t K = choose_prescaler(freq);
+	int8_t K = timer2_choose_prescaler(freq);
 	if(K != -1) {
 		T2CONbits.TCKPS = K;
 		PR2 = ((PBCLK/prescaler[K])/freq)-1;
@@ -46,7 +46,7 @@ int8_t timer2_config(uint32_t freq) {
  */
 int8_t timer2_config_int(uint32_t freq) {
 	int8_t retval = -1;
-	int8_t K = choose_prescaler(freq);
+	int8_t K = timer2_choose_prescaler(freq);
 	if(K != -1) {
 		T2CONbits.TCKPS = K;
 		PR2 = ((PBCLK/prescaler[K])/freq)-1;
@@ -84,7 +84,7 @@ void timer2_stop(void) {
  */
 int8_t timer2_config_pwm(uint32_t freq, uint8_t dutyCycle, uint8_t pin) {
 	int8_t retval = -1;
-	int8_t K = choose_prescaler(freq);
+	int8_t K = timer2_choose_prescaler(freq);
 	if(dutyCycle < 0 || dutyCycle > (PWM_STEPS-1)) {
 		retval = -2;
 	}
