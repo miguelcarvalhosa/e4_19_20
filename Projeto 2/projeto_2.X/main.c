@@ -29,8 +29,12 @@
  */
 int main(int argc, char** argv) {
 	
+    uart1_config(9600, 8, 0, 1);		// Configuração da UART1 com baudrate 9600, 8 data bits, sem paridade e 1 stop bit
+	uart1_puts("Init\n\n");
 	
-	
+    timer3_config_pwm(20000, 0, 2);		// Configuração do Timer3 para gerar um sinal PWM com freq = 20kHz no pino OC2
+    timer3_config_pwm(20000, 0, 3);		// Configuração do Timer3 para gerar um sinal PWM com freq = 20kHz no pino OC3
+    
 	while(1) {
 		
 	}
@@ -38,5 +42,4 @@ int main(int argc, char** argv) {
 	
 	return (EXIT_SUCCESS);
 }
-
 
