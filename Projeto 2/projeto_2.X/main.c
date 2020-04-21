@@ -62,15 +62,15 @@ void control_motor(int step_rpm){
     
     if(step_rpm>0){
         int duty = (step_rpm*(PWM_STEPS-1)/127);            //convert rpm to steps and rotate right
-        timer3_set_pwm(duty,2);
-        timer3_set_pwm(255-duty,3);
+        timer3_set_pwm(128+duty,2);
+        timer3_set_pwm(128-duty,3);
     }else if(step_rpm<0){
         int duty = -(step_rpm*(PWM_STEPS-1)/127);           //convert rpm to steps and rotate left
-        timer3_set_pwm(255-duty,2);
-        timer3_set_pwm(duty,3); 
+        timer3_set_pwm(128-duty,2);
+        timer3_set_pwm(128+duty,3); 
     }else{
         int duty = (step_rpm*(PWM_STEPS-1)/127);            //convert rpm to steps and stop
-        timer3_set_pwm(duty,2);
-        timer3_set_pwm(duty,3);
+        timer3_set_pwm(128+duty,2);
+        timer3_set_pwm(128-duty,3);
     }
 }
