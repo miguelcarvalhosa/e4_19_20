@@ -16,7 +16,6 @@
 
 #include <stdint.h>
 
-
 #ifndef SYSCLK
     #define SYSCLK      80000000
 #endif

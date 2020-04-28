@@ -7,6 +7,7 @@
  * Prescaler array
  */
 static const uint16_t prescaler[8] = {1,2,4,8,16,32,64,256};
+//static const uint16_t prescaler[8] = {256, 64, 32, 16, 8, 4, 2, 1};
 
 
 /*

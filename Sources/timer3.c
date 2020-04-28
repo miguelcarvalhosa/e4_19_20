@@ -6,7 +6,8 @@
 /*
  * Prescaler array
  */
-static const uint16_t prescaler[8] = {1,2,4,8,16,32,64,256};
+//static const uint16_t prescaler[8] = {1,2,4,8,16,32,64,256};
+static const uint16_t prescaler[8] = {256, 64, 32, 16, 8, 4, 2, 1};
 
 
 /*
@@ -85,6 +86,7 @@ void timer3_stop(void) {
 int8_t timer3_config_pwm(uint32_t freq, uint8_t dutyCycle, uint8_t pin) {
 	int8_t retval = -1;
 	int8_t K = timer3_choose_prescaler(freq);
+	K = 6;
 	if(dutyCycle < 0 || dutyCycle > (PWM_STEPS-1)) {
 		retval = -2;
 	}
