@@ -71,3 +71,14 @@ void uart1_puts(uint8_t *s) {
 		s++;
 	}
 }
+
+
+/*
+ * Função para ler carater do teclado
+ */
+char uart1_getc() {
+    if (U1STAbits.OERR == 1)
+        U1STAbits.OERR = 0;
+    while (U1STAbits.URXDA == 0);
+    return U1RXREG;
+}
