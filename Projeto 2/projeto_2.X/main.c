@@ -32,7 +32,8 @@ volatile int8_t direcao = 1;
 volatile int16_t encoder_counter = 0;
 volatile int16_t encoder_counter_first = 0;
 volatile int16_t encoder_counter_last = 0;
-volatile uint8_t velocidade = 0;		// RPM
+volatile int8_t velocidade = 0;		// RPM
+volatile uint8_t timer_flag = 0;
 
 
 /*
@@ -52,12 +53,31 @@ int main(int argc, char** argv) {
 	
 	system_init();
 	
-	control_motor(30);
+	control_motor(0);
+	
 	
 	while(1) {
-		sprintf(vel_str, "%u\n", velocidade);
-		uart1_puts(vel_str);
+		
+		if(timer_flag == 1) {		// Ocorre a uma frequência fixa imposta pelo timer 2
+			timer_flag = 0;
+			
+		}
+		
+		int16_t i;
+		for(i=-128; i<128; i++) {
+			control_motor(i);
+			delay_ms(10);
+		}
+		for(i=127; i>-129; i--) {
+			control_motor(i);
+			delay_ms(10);
+		}
+		
+		
+		//sprintf(vel_str, "%d\n", velocidade);
+		//uart1_puts(vel_str);
 	}
+	
 	
 	return (EXIT_SUCCESS);
 }
@@ -78,7 +98,6 @@ void system_init() {
     uart1_config(9600, 8, 0, 1);		// Configuração da UART1 com baudrate 9600, 8 data bits, sem paridade e 1 stop bit
 	uart1_puts("Init\n\n");
     timer3_config_pwm(20000, 0, 2);		// Configuração do Timer3 para gerar um sinal PWM com freq = 20kHz no pino OC2
-    timer3_config_pwm(20000, 0, 3);		// Configuração do Timer3 para gerar um sinal PWM com freq = 20kHz no pino OC3
 	timer2_config_int(10);				// Configuração do Timer2 para gerar uma interrupção com freq = 10Hz
 	
 	// Configuração manual do timer3
@@ -93,7 +112,7 @@ void system_init() {
 	CNENbits.CNEN2 = 1;					// Ativar o módulo change notification no pino CN2
 	//CNENbits.CNEN3 = 1;				// Ativar o módulo change notification no pino CN3
 	uint16_t trash = PORTB;				// Leitura do PORTB para garantir que as mudanças nos pinos CN2 e CN3 serão notadas
-	IPC6bits.CNIP = 2;					// Prioridade das interrupções do módulo change notification
+	IPC6bits.CNIP = 3;					// Prioridade das interrupções do módulo change notification
 	IFS1bits.CNIF = 0;					// Limpar a flag de interrupção do módulo change notification
 	IEC1bits.CNIE = 1;					// Ativar o módulo change notification
 	EnableInterrupts();					// Ativar as interrupções globais
@@ -107,7 +126,6 @@ void system_init() {
  */
 void control_motor(int16_t step_rpm){
 		timer3_set_pwm(128+step_rpm, 2);
-		timer3_set_pwm(128-step_rpm, 3);
 }
 
 
@@ -150,8 +168,10 @@ void __ISR(_CHANGE_NOTICE_VECTOR) CNISR(void) {
 void __ISR(_TIMER_2_VECTOR) T2ISR(void) {
 	IFS0bits.T2IF = 0;
 	encoder_counter_last = encoder_counter;			// Armazenar o valor atual do contador
-	uint16_t pulsos = abs(encoder_counter_last - encoder_counter_first);		// Número de pulsos detetados em 100ms
+	int16_t pulsos = encoder_counter_last - encoder_counter_first;		// Número de pulsos detetados em 100ms
 	velocidade = pulsos * 60 / 84;					// Cálculo da velocidade em RPM's
 	encoder_counter_first = encoder_counter;		// Armazenar o valor atual do contador para mais tarde utilizar
-	
+	timer_flag = 1;
 }
+
+

@@ -52,7 +52,7 @@ int8_t timer2_config_int(uint32_t freq) {
 		T2CONbits.TCKPS = K;
 		PR2 = ((PBCLK/prescaler[K])/freq)-1;
 		TMR2 = 0;							// Reset timer T2
-		IPC2bits.T2IP = 1;	 // Timer interrupt priority
+		IPC2bits.T2IP = 2;	 // Timer interrupt priority
 		IEC0bits.T2IE = 1;	 // Interrupt enable
 		IFS0bits.T2IF = 0;	 // Reset interrupt flag
 		T2CONbits.TON = 1;					// Enable timer T2
