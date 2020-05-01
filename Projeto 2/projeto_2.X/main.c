@@ -11,6 +11,7 @@
 #include "../../Sources/uart.h"
 #include "../../Sources/delay.h"
 #include "../../Sources/interrupts.h"
+#include "../../Sources/stack.h"
 
 
 /*
@@ -33,7 +34,9 @@ volatile int16_t encoder_counter = 0;
 volatile int16_t encoder_counter_first = 0;
 volatile int16_t encoder_counter_last = 0;
 volatile uint8_t velocidade = 0;		// RPM
-
+volatile uint16_t graus = 0;            // angulo
+volatile int setpoint = 0;              // setpoint
+volatile char fullstack = 0;
 
 /*
  * Protótipos das funções
@@ -41,22 +44,28 @@ volatile uint8_t velocidade = 0;		// RPM
 void system_init();
 void control_motor(int16_t step_rpm);         // function to send pwm signal to half H-bridge input -> step_rpm [-127,127]
 void __ISR(_CHANGE_NOTICE_VECTOR) CNISR(void);
+void print_UI(uint8_t velocidade_rpm,uint16_t grau_resolution);
+void __ISR(_UART_1_VECTOR) UART1ISR(void);
 
 
 /*
  * Main
  */
 int main(int argc, char** argv) {
-	
 	uint8_t vel_str[4];
 	
 	system_init();
+    
+    initStack();
 	
 	control_motor(30);
 	
 	while(1) {
 		sprintf(vel_str, "%u\n", velocidade);
 		uart1_puts(vel_str);
+        
+        print_UI(velocidade,graus);
+        
 	}
 	
 	return (EXIT_SUCCESS);
@@ -88,6 +97,13 @@ void system_init() {
 	OC2CONbits.OCM = 6;
 	OC2CONbits.OCTSEL = 1;
 	T3CONbits.ON = 1;
+    
+    // configurar interrupções para a UART1
+    IEC0bits.U1TXIE = 1;
+    IEC0bits.U1RXIE = 1;
+    IPC6bits.U1IP = 0x2;
+    IEC0bits.U1EIE = 1;
+    
 	
 	CNCONbits.ON = 1;					// Ativar o módulo Change Notification
 	CNENbits.CNEN2 = 1;					// Ativar o módulo change notification no pino CN2
@@ -103,7 +119,7 @@ void system_init() {
 
 
 /*
- * 
+ * Função para gerar sinais pwm
  */
 void control_motor(int16_t step_rpm){
 		timer3_set_pwm(128+step_rpm, 2);
@@ -154,4 +170,89 @@ void __ISR(_TIMER_2_VECTOR) T2ISR(void) {
 	velocidade = pulsos * 60 / 84;					// Cálculo da velocidade em RPM's
 	encoder_counter_first = encoder_counter;		// Armazenar o valor atual do contador para mais tarde utilizar
 	
+}
+
+
+/*
+ * Função para imprimir a interface gráfica no terminal
+ */
+void print_UI(uint8_t velocidade_rpm,uint16_t grau_resolution){
+    char vel_str[4];
+    char grau_str[4];
+    int dig1;
+    int dig2;
+    int dig3;
+    int result;
+    
+    uart1_putc('\n');
+    
+    // Imprimir velocidade angular em rpm
+    uart1_puts("Velocidade em rpm: ");
+    if(velocidade_rpm >= 10 && velocidade_rpm <= 50){
+        sprintf(vel_str, "%u\n", velocidade_rpm);
+        uart1_puts(vel_str);
+    }else{
+        uart1_putc('E');
+    }
+    
+    // Imprimir posição angular em graus
+    uart1_puts("Posição angular em graus: ");
+    sprintf(grau_str, "%u\n", grau_resolution);
+    uart1_puts(grau_str);
+    
+    // dar pop da stack
+    if(isStackEmpty() == NotEmpty){
+        dig1 = popFromStack();
+        
+        if(dig1==0x0D)
+            dig1 = popFromStack();                // ignorar enter
+        
+        // se o seguinte for numero
+        if(dig1>=0x30 && dig1<=0x39){
+            if(isStackEmpty() == Empty && dig1==0x30){             // apenas o zero
+                result = dig1 - 0x30;
+            }else if(isStackEmpty() == NotEmpty){    // numero negativo, ou dois numeros
+                dig2 = popFromStack();
+                if(dig2>=0x30 && dig2<=0x39){
+                    if(isStackEmpty() == Empty){
+                        result = (dig2 - 0x30)*10 + (dig1 - 0x30);    
+                    }else if(isStackEmpty() == NotEmpty){
+                        dig3 = popFromStack();
+                        if(dig3==0x2D){
+                            result = -((dig2 - 0x30)*10 + (dig1 - 0x30));//numero negativo com dois digitos
+                        }else
+                            uart1_puts("Setpoint invalido");
+                    }     
+                }else{
+                    uart1_puts("Setpoint invalido");
+                }
+            }  
+        }else
+            uart1_puts("Setpoint invalido");
+    }
+    
+    if(result==0){
+        setpoint = 0;
+    }else if(result>=10 && result<=50){
+        setpoint = result;
+    }else if(result<=-10 && result>=-50){
+        setpoint = result;
+    }else{
+        uart1_puts("Setpoint invalido");
+    }
+    
+}
+
+/*
+ * Rotina de serviço à interrupção para a UART1
+ */
+void __ISR(_UART_1_VECTOR) UART1ISR(void) {
+    if(IFS0bits.U1RXIF==1 && fullstack==0){
+        int rcvchar = U1RXREG;
+        pushOntoStack(rcvchar);                 // push do carater lido para a stack
+        if(isStackEmpty() == Full || rcvchar == 0x0D){
+            fullstack = 1;
+        }
+        IFS0bits.U1RXIF = 0;                    // reset UART1 RX interrupt flag
+    }
 }
