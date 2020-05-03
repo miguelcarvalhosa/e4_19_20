@@ -14,7 +14,8 @@
  *
  * Possible values for the stack state
  */
-typedef enum { Empty, NotEmpty, Full } stackState_t;
+typedef enum {Empty, NotEmpty, Full} stackState_t;
+
 
 /*
  * initStack
@@ -23,19 +24,22 @@ typedef enum { Empty, NotEmpty, Full } stackState_t;
  */
 void initStack(void);
 
+
 /*
  * pushOntoStack
  *
  * Writes the value passed as argument in the top of the stack.
  */
-int pushOntoStack(int number);
+int8_t pushOntoStack(uint8_t number);
+
 
 /*
  * popFromStack
  *
  * Returns the value that is on top of the stack.
  */
-int popFromStack(void);
+uint8_t popFromStack(void);
+
 
 /*
  * isStackEmpty
@@ -43,5 +47,6 @@ int popFromStack(void);
  * Tests if stack is empty.
  */
 stackState_t isStackEmpty(void);
+
 
 #endif
