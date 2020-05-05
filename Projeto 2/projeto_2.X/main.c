@@ -23,12 +23,7 @@
 #define h				1/Fa			// Período de amostragem em segundos
 #define K				3				// Constante de proporcionalidade do controlador PI
 #define Ti				1				// Constante do integral do controlador PI
-										// Para Fa=10, 1<Ti<3		Para Fa=20, 0.16<Ti<0.5
-/*
- * Parâmetros experimentados:
- *		Fa=10, K=3, Ti=1: a resposta é um pouco lenta, oscila ligeiramente até estabilizar e tem overshoot
- *		Fa=20, K=3, Ti=1: a resposta é mais lenta e não tem overshoot
- */
+
 
 
 /*
@@ -74,7 +69,7 @@ int main(int argc, char** argv) {
 	float s0 = K + 10*K*h/Ti *0.1;	// Constante s0
 	float s1 = -K;					// Constante s1
 	
-	uint8_t display_str[45];
+	uint8_t display_str[45];		// String para apresentar os dados no terminal
 	
 	system_init();
     
@@ -128,7 +123,6 @@ void system_init() {
 	TRISDbits.TRISD12 = 0;				// Pino RD12 configurado como saída. Este pino é usado como enable da ponte H e é o pino 8 da placa chipKit MAX32
 	LATDbits.LATD12 = 1;				// Ativar a ponte H
     TRISDbits.TRISD1 = 0;				// Pino RD1 configurado como saída. Este pino corresponde ao OC2 e ao pino 5 da placa chipKit MAX32
-    TRISDbits.TRISD2 = 0;				// Pino RD2 configurado como saída. Este pino corresponde ao OC3 e ao pino 6 da placa chipKit MAX32
 	AD1PCFGbits.PCFG0 = 1;				// Pino A0 como digital
 	AD1PCFGbits.PCFG1 = 1;				// Pino A1 como digital
 	TRISBbits.TRISB0 = 1;				// Pino RC14 configurado como entrada. Este pino corresponde ao CN2 e ao pino A0 da placa chipKit MAX32
@@ -138,7 +132,7 @@ void system_init() {
     timer3_config_pwm(20000, 0, 2);		// Configuração do Timer3 para gerar um sinal PWM com freq = 20kHz no pino OC2
 	timer2_config_int(Fa);				// Configuração do Timer2 para gerar uma interrupção com freq = Fa
 	
-	// Configuração manual do timer3
+	// Configuração manual da frequência do timer3, há um bug na função timer3_config_pwm
 	T3CONbits.TCKPS = 0;
 	PR3 = 1999;
 	TMR3 = 0;
@@ -153,7 +147,6 @@ void system_init() {
 	
 	CNCONbits.ON = 1;					// Ativar o módulo Change Notification
 	CNENbits.CNEN2 = 1;					// Ativar o módulo change notification no pino CN2
-	//CNENbits.CNEN3 = 1;				// Ativar o módulo change notification no pino CN3
 	uint16_t trash = PORTB;				// Leitura do PORTB para garantir que as mudanças nos pinos CN2 e CN3 serão notadas
 	IPC6bits.CNIP = 3;					// Prioridade das interrupções do módulo change notification
 	IFS1bits.CNIF = 0;					// Limpar a flag de interrupção do módulo change notification
@@ -167,48 +160,51 @@ void system_init() {
 
 
 /*
- * 
- * Função para gerar sinais pwm
+ * Função para gerar o sinal pwm
+ * Recebe um valor inteiro entre -127 e +127. Valores positivos significam rotação num sentido, valores negativos significam rotação no sentido oposto.
+ * Valor nulo significa parar o motor
  */
 void control_motor(int16_t step_rpm){
-		timer3_set_pwm((PWM_STEPS/2)+step_rpm, 2);
+	timer3_set_pwm((PWM_STEPS/2)+step_rpm, 2);
 }
 
 
 /*
  * Rotina de serviço à interrupção do módulo Change Notification
+ * Serve para contar o número de pulsos do encoder e determinar a posição e o sentido de rotação do veio
  */
 void __ISR(_CHANGE_NOTICE_VECTOR) CNISR(void) {
 	IFS1bits.CNIF = 0;
 	curr_encoder_A = PORTBbits.RB0;
 	curr_encoder_B = PORTBbits.RB1;
 	if(curr_encoder_A == 1 && prev_encoder_A == 0) {		// transição ascendente de A
-		if(curr_encoder_B == 0) {							// direção 1
+		if(curr_encoder_B == 0) {							// sentido 1
 			sentido = 1;
 			encoder_counter++;
 			graus += 43;
 		}
-		else if(curr_encoder_B == 1) {						// direção -1
+		else if(curr_encoder_B == 1) {						// sentido -1
 			sentido = -1;
 			encoder_counter--;
 			graus -= 43;
 		}
 	}
 	else if(curr_encoder_A == 0 && prev_encoder_A == 1) {	// transição descendente de A
-		if(curr_encoder_B == 1) {							// direção 1
+		if(curr_encoder_B == 1) {							// sentido 1
 			sentido = 1;
 			encoder_counter++;
 			graus += 43;
 		}
-		else if(curr_encoder_B == 0) {						// direção -1
+		else if(curr_encoder_B == 0) {						// sentido -1
 			sentido = -1;
 			encoder_counter--;
 			graus -= 43;
 		}
 	}
-	if(abs(graus) > 36000) {
+	if(abs(graus) > 36000) {		// Posição de forma cíclica entre 0 e 360 graus
 		graus = 0;
 	}
+	// Guardar estados anteriores de ambos os canais do encoder
 	prev_encoder_A = curr_encoder_A;
 	prev_encoder_B = curr_encoder_B;
 }
