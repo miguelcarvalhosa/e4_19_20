@@ -6,7 +6,7 @@
 
 /*************************************************************************/
 
-#define MAX_SIZE 4
+#define MAX_SIZE 3
 
 struct Stack {
 	uint8_t buffer[MAX_SIZE];
