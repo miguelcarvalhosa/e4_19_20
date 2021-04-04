@@ -1,0 +1,22 @@
+* D:\Documentos\Aulas Universidade\4º Ano\Sistemas de Instrumentação Eletrónica\Prática\Projeto 4\circuito.asc
+R5 0 N002 4k7
+R6 N002 N003 680k
+V2 Vcc 0 5
+V§Termopar N004 N005 {Vtp}
+R4 N005 0 150
+R3 N001 N005 100k
+R1 N001 0 5k6
+R§Termistor Vref N001 {Rt}
+XU4 N004 N002 Vcc 0 Vadc OP191
+R2 Vadc N003 390k
+R7 Vcc Vref 82
+XU2 Vref 0 Vref TL431
+.tran 1
+.param Vtp=38.75u*(Tproc-Tamb)
+.param Tproc=0
+.param Tamb=25
+.param Rt=10k*exp(3540*((1/(Tamb+273))-(1/298)))
+.lib ADI.lib
+.lib TL431.sub
+.backanno
+.end
